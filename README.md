@@ -2,15 +2,14 @@
 
 This repo contains code used for stock valuations. The stock valuation method used is a form of value investing, using Rule 1 calculations and analysis.
 
-The stock price and company fundamental data is source from [Alpha Vantage](https://www.alphavantage.co/). From the "About" section of their website:
->Backed by the prestigious Y Combinator and composed of a tight-knit community of researchers, engineers, and business professionals, Alpha Vantage Inc. has partnered with major exchanges and institutions around the world to become a leading provider of stock APIs as well as forex (FX) and digital/crypto currency data feeds. Our success is driven by rigorous research, cutting edge technology, and a disciplined focus on democratizing access to data.
+The stock price and company fundamental data is sourced from [SimFin](https://simfin.com/) and [Alpha Vantage](https://www.alphavantage.co/). Historical fundamental data (pre-2019) for US companies was downloaded via SimFin. This data was then loaded into a [Postgres](https://www.postgresql.org/) database. The Alpha Vantage data provides current fundamental data, and recent data is added to the Postgres database from this source as it becomes available.
 
-They provide free a stock API service for up to 5 requests per minute, or 500 requests per day.
 
 
 ## Table of Contents
 1. [Setup](#1-setup)
 2. [Configuration](#2-configuration)
+3. [Database](#3-database)
 
 ## 1. Setup
 
@@ -38,3 +37,18 @@ av-api-token = "your-api-key"
 ```
 
 In order to use use the project, an API key from [Alpha Vantage](https://www.alphavantage.co/) is needed. as described above. Once a free API key is obtained, the value needs to be stored in the `.env` file as shown above.
+
+## 3. Database
+
+As previously mentioned, the data for this project is sourced and loaded into a Postgres database, which is currently hosted in a [Docker](https://www.docker.com/) container on a [Digital Ocean](https://www.digitalocean.com/) server droplet. 
+
+For future debugging and reference, the command used to run the [Postgres Docker](https://hub.docker.com/_/postgres) container on the server is:
+```shell
+docker run -d --name invest-pg-docker \
+ -e POSTGRES_PASSWORD=password \
+ -e POSTGRES_DB=invest-db \
+ -e PGDATA=/var/lib/postgresql/data/pgdata \
+ -v ~/data:/var/lib/postgresql/data \
+ -p 5432:5432 \
+ postgres
+```
