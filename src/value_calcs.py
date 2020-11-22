@@ -18,7 +18,6 @@ stock_income_stmts = income_stmt_all[income_stmt_all.Ticker == stock]
 
 # Create ultimate stock data df
 stock_income_data = stock_income_stmts[["Publish Date", "Report Date", "Shares (Basic)", "Revenue", "Net Income"]].copy()
-print(stock_income_data)
 
 # ======== 2. Next process the balance sheets 
 balance_sheets_all = pd.read_csv(balance_stmt_file, sep=";")
