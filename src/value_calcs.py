@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-stock = 'ABBV'
+stock = 'LOW'
 
 # Get CSVs for financial statements
 dir = os.getcwd()

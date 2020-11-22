@@ -29,4 +29,4 @@ income_stmts, _ = fd.get_income_statement_annual(symbol=stock)
 val = income_stmts["fiscalDateEnding"]
 
 
-print(income_stmts.columns)
+print(income_stmts.head())
