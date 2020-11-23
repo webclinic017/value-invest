@@ -33,10 +33,17 @@ pip install -r requirements.txt
 This project requies a `.env` file to store environment variables and configuations. Create a `.env` file in the `src/` directory with the following contents:
 
 ```json
-av-api-token = "your-api-key"
+AV-API-TOKEN = "your-api-key"
+DB-USER = "username"
+PASSWORD = "password"
+HOST = "0.0.0.0"
+PORT = "5432"
+DATABASE = "invest-db"
 ```
 
 In order to use use the project, an API key from [Alpha Vantage](https://www.alphavantage.co/) is needed. as described above. Once a free API key is obtained, the value needs to be stored in the `.env` file as shown above.
+
+The database connection values need to be filled in to connect to the database I have running on a [Digital Ocean](https://www.digitalocean.com/) server droplet. Contact me for connection details if interested.
 
 ## 3. Database
 
