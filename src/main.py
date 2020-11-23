@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # Load env vars from .env
 load_dotenv()
-token = os.environ.get("av-api-token")
+token = os.environ.get("AV-API-TOKEN")
 
 # Which stock do we want to look at?
 stock = "AAPL"
