@@ -7,7 +7,7 @@ def start():
     Connects to Postgres DB
     Retrieves stock fundamental data and runs value cals
     '''
-    STOCK = 'AAPL'
+    STOCK = 'TSLA'
 
     # Connect to postgres db
     conn = db.connect_db()
