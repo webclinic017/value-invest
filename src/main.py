@@ -7,7 +7,7 @@ def start():
     Connects to Postgres DB
     Retrieves stock fundamental data and runs value cals
     '''
-    STOCK = 'TSLA'
+    STOCK = 'AAPL'
 
     # Connect to postgres db
     conn = db.connect_db()
@@ -45,11 +45,14 @@ def start():
                                 f_cashflow_annual c
                             WHERE 
                                 c.ticker = '{STOCK}';"""
-    cashflow_df_cols = ["Net Cash from Operating Act."]
+    cashflow_df_cols = ["Net Cash from Operating Act"]
     cashflow_df = db.postgres_to_df(conn, cashflow_stmt_query, cashflow_df_cols)
 
     # Join 3 resultant dfs together 
     stock_df = pd.concat([income_df, balance_df, cashflow_df], axis=1, sort=False)
+    
+    stock_df[["Sales Per Share", "EPS", "Equity Per Share", "Op. Cash Per Share"]] = stock_df[["Revenue", "Net Income", "Total Equity", "Net Cash from Operating Act"]].div(stock_df["Shares"], axis=0)
+
     print(stock_df)
 
 
