@@ -1,32 +1,58 @@
-from alpha_vantage.timeseries import TimeSeries
-from alpha_vantage.fundamentaldata import FundamentalData
-from pprint import pprint
-import os
-from dotenv import load_dotenv
+import database as db
+import pandas as pd
 
-# Load env vars from .env
-load_dotenv()
-token = os.environ.get("AV-API-TOKEN")
+def start():
+    '''
+    This is the main function of the project
+    Connects to Postgres DB
+    Retrieves stock fundamental data and runs value cals
+    '''
+    STOCK = 'TSLA'
 
-# Which stock do we want to look at?
-stock = "AAPL"
+    # Connect to postgres db
+    conn = db.connect_db()
 
-'''
-# Sample time series data retrieval
-ts = TimeSeries(key=token, output_format='pandas')
-data, meta_data = ts.get_intraday(symbol='LOW',interval='1min', outputsize='full')
-print(data.describe())
-'''
+    # Get income statement relevant columns for stock of interest
+    income_stmt_query = f"""SELECT
+                                ticker, 
+                                report_date, 
+                                shares_basic, 
+                                revenue, 
+                                net_income
+                            FROM 
+                                f_income_stmts_annual
+                            WHERE 
+                                ticker = '{STOCK}';"""
 
-# Sample fundamental data retrieval
-fd = FundamentalData(key=token, output_format="pandas")
+    income_df_columns = ["Ticker", "Date", "Shares", "Revenue", "Net Income"]
 
-# Get income statement
-income_stmts, _ = fd.get_income_statement_annual(symbol=stock)
+    income_df = db.postgres_to_df(conn, income_stmt_query, income_df_columns)
 
-# From the income statement, we want the most recent data years 
-# Alpha Vantage only provides us with the 5 most recent years :(
-val = income_stmts["fiscalDateEnding"]
+    # Get balance sheet columns
+    balance_stmt_query = f"""SELECT
+                                total_equity
+                            FROM 
+                                f_balance_sheets_annual b
+                            WHERE 
+                                b.ticker = '{STOCK}';"""
+    balance_df_cols = ["Total Equity"]
+    balance_df = db.postgres_to_df(conn, balance_stmt_query, balance_df_cols)
+
+    # Get cash flow stmt columns
+    cashflow_stmt_query = f"""SELECT
+                                net_cash_operating_activities
+                            FROM 
+                                f_cashflow_annual c
+                            WHERE 
+                                c.ticker = '{STOCK}';"""
+    cashflow_df_cols = ["Net Cash from Operating Act."]
+    cashflow_df = db.postgres_to_df(conn, cashflow_stmt_query, cashflow_df_cols)
+
+    # Join 3 resultant dfs together 
+    stock_df = pd.concat([income_df, balance_df, cashflow_df], axis=1, sort=False)
+    print(stock_df)
 
 
-print(income_stmts.head())
+
+if __name__ == "__main__":
+    start()
