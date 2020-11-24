@@ -2,9 +2,9 @@ import pandas as pd
 import psycopg2
 import database as db
 import os
+import yfinance as yf
 
 CURRENT_FY = 2020
-API-KEY = os.environ.get("AV-API-TOKEN")
 
 def update():
 
@@ -19,12 +19,17 @@ def update():
     stocks_cols = ["Stocks"]
     stocks_list = db.postgres_to_df(conn, stocks_query, stocks_cols)["Stocks"]
 
-    cleaned_stocks = []
+    x = 0
     for s in stocks_list:
+        x += 1
+        if x > 5: break
+        print(s)
         # Go through each stock, compare to stocks recognized by (Alpha Vantage, Yahoo Finance)
-        cleaned_stocks.append(s)
+        stock = yf.Ticker(s)
+        print(stock.cashflow)
 
-    print(len(cleaned_stocks))
+
+
 
 if __name__ == "__main__":
     update()
